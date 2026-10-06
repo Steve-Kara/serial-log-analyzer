@@ -20,7 +20,7 @@ LEVELS = ("TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL")
 LINE_RE = re.compile(
     r"^\[(?P<ts>\d{1,2}:\d{2}:\d{2}(?:\.\d{1,6})?)\]\s+"
     r"(?P<level>" + "|".join(LEVELS) + r")\s+"
-    r"(?:(?P<tag>[A-Za-z0-9_.\-]+):\s+)"
+    r"(?:(?P<tag>[A-Za-z0-9_.\-]+):\s+)?"
     r"(?P<msg>.*)$"
 )
 
