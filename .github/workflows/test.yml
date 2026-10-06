@@ -1,0 +1,42 @@
+name: Test
+
+# 什么时候跑：
+#   push 到 main        → 每次合并后验证
+#   pull_request 指向 main → 合并前就拦住问题（这就是 PR 上的那个绿勾/红叉）
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: pytest (${{ matrix.os }} · py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # 一个组合失败时，不要取消其它组合 —— 这样你能一次看到所有问题
+      fail-fast: false
+      matrix:
+        # 为什么要两个系统：这个项目处理中文输出，Windows 的编码行为
+        # 和 Linux 不同（我们本地就踩过一次 GBK 乱码），两边都测才靠谱。
+        os: [ubuntu-latest, windows-latest]
+        # 为什么测 3.9：pyproject.toml 里声明了 requires-python = ">=3.9"，
+        # 声明支持的版本就该真的测一遍。
+        python-version: ["3.9", "3.12"]
+
+    steps:
+      - name: 取出代码
+        uses: actions/checkout@v4
+
+      - name: 装 Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 安装项目与测试依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: 跑测试
+        run: pytest -v
