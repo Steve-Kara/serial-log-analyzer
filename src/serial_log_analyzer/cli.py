@@ -7,7 +7,7 @@ import sys
 from typing import List, Optional
 
 from . import __version__
-from .parser import LEVELS, Summary, summarize
+from .parser import LEVELS, Summary, filter_lines, summarize
 
 RULE = "-" * 32
 
@@ -25,10 +25,13 @@ def _force_utf8_output() -> None:
             pass
 
 
-def render(s: Summary, source: str) -> str:
+def render(s: Summary, source: str, grep: Optional[str] = None) -> str:
     """把汇总结果渲染成给人看的文本。"""
     out: List[str] = []
-    out.append(f"串口日志汇总  {source}")
+    header = f"串口日志汇总  {source}"
+    if grep:
+        header += f"   [筛选: {grep}]"
+    out.append(header)
     out.append(RULE)
     out.append(f"总行数      {s.total}")
     out.append(f"已解析      {s.parsed}")
@@ -58,6 +61,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     _force_utf8_output()
     ap = argparse.ArgumentParser(prog="sla", description="串口日志分析器")
     ap.add_argument("path", nargs="?", default="-", help="日志文件路径；- 表示从标准输入读")
+    ap.add_argument("--grep", metavar="正则", help="只统计匹配该正则的日志行（大小写不敏感）")
     ap.add_argument("--version", action="version", version=f"sla {__version__}")
     args = ap.parse_args(argv)
 
@@ -72,7 +76,11 @@ def main(argv: Optional[List[str]] = None) -> int:
             return 2
         source = args.path
 
-    print(render(summarize(text.splitlines()), source))
+    lines = text.splitlines()
+    if args.grep:
+        lines = list(filter_lines(lines, args.grep))
+
+    print(render(summarize(lines), source, args.grep))
     return 0
 
 

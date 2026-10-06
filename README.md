@@ -35,6 +35,12 @@ sla examples/sample.log
 type log.txt | sla -
 ```
 
+只想看某类日志时用 `--grep`（正则，大小写不敏感）：
+
+```bash
+sla examples/sample.log --grep i2c
+```
+
 ## 示例输出
 
 ```text
@@ -72,7 +78,7 @@ pytest            # 跑测试
 
 - [ ] 支持自定义时间戳格式（有些固件用 `tick` 而不是时钟）
 - [ ] 导出 CSV / Markdown 报告
-- [ ] `--grep` 过滤关键字
+- [x] `--grep` 过滤关键字
 - [ ] 自动识别常见的 FreeRTOS / HAL 错误码
 - [ ] 过滤「与主程序无关」的报错，不计入统计
 
