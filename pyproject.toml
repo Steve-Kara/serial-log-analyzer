@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "serial-log-analyzer"
-version = "0.1.0"
+version = "0.1.1"
 description = "把 STM32 串口日志变成一张能读的汇总表"
 readme = "README.md"
 requires-python = ">=3.9"

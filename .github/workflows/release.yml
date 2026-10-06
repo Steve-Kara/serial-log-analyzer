@@ -1,0 +1,40 @@
+name: Release
+
+# 只有推 tag（形如 v0.1.1）时才跑 —— 平时提交不会触发发布
+on:
+  push:
+    tags: ["v*"]
+
+# 创建 Release 需要写权限（默认的 GITHUB_TOKEN 是只读的）
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 取出代码
+        uses: actions/checkout@v4
+
+      - name: 装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 发布前最后一道关：跑测试
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pytest -q
+
+      - name: 构建发行包（sdist + wheel）
+        run: |
+          python -m pip install build
+          python -m build
+
+      - name: 创建 Release 并附上构建产物
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          # 自动用提交记录生成变更说明（也可以手写）
+          generate_release_notes: true
