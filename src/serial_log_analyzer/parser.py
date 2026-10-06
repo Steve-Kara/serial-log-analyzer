@@ -70,6 +70,18 @@ def parse_lines(lines: Iterable[str]) -> Iterator[Optional[Entry]]:
         yield parse_line(ln)
 
 
+def filter_lines(lines: Iterable[str], pattern: str) -> Iterator[str]:
+    """只保留匹配 pattern 的日志行（大小写不敏感）。
+
+    匹配的是**原始行文本**，所以对无法解析的脏数据行同样有效 ——
+    有时候你要找的正是那行没被解析出来的报错。
+    """
+    rx = re.compile(pattern, re.IGNORECASE)
+    for ln in lines:
+        if rx.search(ln):
+            yield ln
+
+
 def summarize(lines: Iterable[str]) -> Summary:
     """统计行数、级别分布、时间跨度、最常见的错误。"""
     s = Summary()
