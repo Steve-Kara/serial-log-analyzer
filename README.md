@@ -1,6 +1,8 @@
 # serial-log-analyzer
 
 [![Test](https://github.com/Steve-Kara/serial-log-analyzer/actions/workflows/test.yml/badge.svg)](https://github.com/Steve-Kara/serial-log-analyzer/actions/workflows/test.yml)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://github.com/Steve-Kara/serial-log-analyzer)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 > 串口日志分析器 —— 把 STM32 串口日志变成一张能读的汇总表。
 > A tiny CLI that turns messy serial logs into a readable summary.
